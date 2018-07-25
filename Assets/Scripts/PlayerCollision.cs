@@ -9,6 +9,7 @@ public class PlayerCollision : MonoBehaviour {
 		if (collisionInfo.collider.tag == "Obstacle") {
 			Debug.Log ("We hit an obstacle.");
 		}
+		
 
 	}
 }
