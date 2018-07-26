@@ -4,40 +4,50 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
-	public Rigidbody rb;
-	public float forwardForce = 2000f;
-	public float sidewaysForce = 500f;
+    public float speed = 10f;
+    public Vector3 targetPos;
+    public bool isMoving;
+    const int MOUSE = 0;
+    // Use this for initialization1
+    void Start()
+    {
 
-	// Use this for initialization
-	
-	// Update is called once per frame
-	void Update () 
-	{
-		// Add a forward force
-		// rb.AddForce(0, 0, forwardForce * Time.deltaTime);	
-		if (Input.GetKey ("d")) 
-		{
-			rb.AddForce (-sidewaysForce * Time.deltaTime, 0, 0, ForceMode.VelocityChange);
-		}
-		if (Input.GetKey ("a")) 
-		{
-			rb.AddForce (sidewaysForce * Time.deltaTime, 0, 0, ForceMode.VelocityChange);
-		}
-		if (Input.GetKey ("w")) 
-		{
-			rb.AddForce (0, 0, -sidewaysForce * Time.deltaTime, ForceMode.VelocityChange);
-		}
-		if (Input.GetKey ("s")) 
-		{
-			rb.AddForce (0, 0, sidewaysForce * Time.deltaTime, ForceMode.VelocityChange);
-		}
-		if (Input.GetKey("e"))
-		{
-			rb.AddForce(0, sidewaysForce * Time.deltaTime, 0, ForceMode.VelocityChange);
-		}
-		if (Input.GetKey("r"))
-		{
-			rb.AddForce(0, -sidewaysForce * Time.deltaTime, 0, ForceMode.VelocityChange);
-		}
-	}
+        targetPos = transform.position;
+        isMoving = false;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (Input.GetMouseButton(MOUSE))
+        {
+            SetTarggetPosition();
+        }
+        if (isMoving)
+        {
+            MoveObject();
+        }
+    }
+    void SetTarggetPosition()
+    {
+        Plane plane = new Plane(Vector3.up, transform.position);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        float point = 0f;
+
+        if (plane.Raycast(ray, out point))
+            targetPos = ray.GetPoint(point);
+
+        isMoving = true;
+    }
+    void MoveObject()
+    {
+        transform.LookAt(targetPos);
+        transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
+
+        if (transform.position == targetPos)
+            isMoving = false;
+        Debug.DrawLine(transform.position, targetPos, Color.red);
+
+    }
 }
